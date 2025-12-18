@@ -1,0 +1,25 @@
+<table class="table table-striped table-hover">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Phone</th>
+
+  </tr>
+  </thead>
+  <tbody>
+  @for(employee of employees$ | async; track employee.id) {
+    <tr>
+      <td>{{employee.lastName}}, {{employee.firstName}}</td>
+      <td>{{employee.phone}}</td>
+      <th>
+        &nbsp;
+        <button type="button" class="material-icons"></button>
+      </th>
+      <th>
+        &nbsp;
+        <button type="button" class="material-icons">delete</button>
+      </th>
+    </tr>
+  }
+  </tbody>
+</table>
