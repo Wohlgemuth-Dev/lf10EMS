@@ -1,0 +1,44 @@
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.sortable-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #0d6efd, #6ea8fe);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.sortable-header:hover::after {
+  transform: scaleX(1);
+}
+
+.sortable-header:hover {
+  color: #6ea8fe;
+}
+
+.sortable-header i {
+  font-size: 0.8em;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.sortable-header:hover i {
+  opacity: 1;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.footer-row {
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+}

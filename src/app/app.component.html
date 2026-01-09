@@ -1,11 +1,29 @@
-<div class="container">
-  <div class="row mt-3">
-    <h1>EMS</h1>
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-lg">
+  <div class="container-fluid">
+    <!-- Home Button Left -->
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <i class="bi bi-house-door-fill fs-4"></i>
+    </a>
+
+    <!-- Centered Title -->
+    <span class="navbar-text mx-auto fw-bold fs-4 text-white">
+      Employees Management System
+    </span>
+
+    <!-- Logout Button Right -->
+    <button class="btn btn-outline-light" (click)="authService.logout()">
+      <i class="bi bi-box-arrow-right me-1"></i>
+      Logout
+    </button>
   </div>
-  <div class="row mt-1">
-    <div class="col-md-7 mb-3">
-      <app-employee-list></app-employee-list>
-    </div>
-  </div>
+</nav>
+
+<div class="container-fluid mt-4 px-4">
+  <router-outlet></router-outlet>
 </div>
 
+<footer class="fixed-bottom bg-dark py-3 d-flex justify-content-center align-items-center border-top shadow-lg">
+  <a routerLink="/impressum" class="text-decoration-none text-light fw-light">
+    <i class="bi bi-info-circle me-2"></i>Impressum
+  </a>
+</footer>

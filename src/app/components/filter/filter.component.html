@@ -1,0 +1,13 @@
+<div class="card shadow-sm h-100">
+    <div class="card-header bg-primary text-white fw-bold">
+        <i class="bi bi-funnel-fill me-2"></i>Filter
+    </div>
+    <div class="card-body">
+        @for(skill of db.skills$ | async; track skill.id) {
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox">
+            <label class="form-check-label">{{ skill.skill }}</label>
+          </div>
+        }
+    </div>
+</div>

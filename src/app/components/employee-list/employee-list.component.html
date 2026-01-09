@@ -1,25 +1,45 @@
-<table class="table table-striped table-hover">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Phone</th>
-
-  </tr>
-  </thead>
-  <tbody>
-  @for(employee of employees$ | async; track employee.id) {
-    <tr>
-      <td>{{employee.lastName}}, {{employee.firstName}}</td>
-      <td>{{employee.phone}}</td>
-      <th>
-        &nbsp;
-        <button type="button" class="material-icons"></button>
-      </th>
-      <th>
-        &nbsp;
-        <button type="button" class="material-icons">delete</button>
-      </th>
-    </tr>
-  }
-  </tbody>
-</table>
+<div class="card shadow-sm h-100">
+  <div class="card-body p-0">
+    <div class="table-scroll flex-grow-1">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th class="sortable-header" (click)="sort('lastName')">
+              Name <i class="bi {{getSortIcon('lastName')}} ms-1"></i>
+            </th>
+            <th class="sortable-header" (click)="sort('phone')">
+              Phone <i class="bi {{getSortIcon('phone')}} ms-1"></i>
+            </th>
+            <th colspan="2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(employee of sortedEmployees$ | async; track employee.id) {
+          <tr>
+            <td>{{employee.lastName}}, {{employee.firstName}}</td>
+            <td>{{employee.phone}}</td>
+            <td class="text-center">
+              <button type="button" class="btn btn-sm btn-outline-primary" title="View"
+                (click)="navigateToEmployeeInspector(employee.id)">
+                <i class="bi bi-eye"></i> View
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
+              (click)="deleteEmployee(employee.id)">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer-row">
+    <button type="button" class="btn btn-sm btn-outline-success" title="Add Employee"
+    (click)="addEmployee()">
+      <i class="bi bi-plus-square"></i> Add Employee
+    </button>
+  </div>
+</div>

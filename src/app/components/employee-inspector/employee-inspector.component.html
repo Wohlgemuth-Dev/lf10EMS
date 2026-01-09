@@ -1,0 +1,13 @@
+<div class="row g-4">
+  <!-- Employee Overview -->
+  <div class="col-md-3 col-lg-2">
+    <div *ngFor="let item of employee | keyvalue">
+      <strong>{{ item.key }}:</strong> {{ item.value }}
+    </div>
+  </div>
+
+  <!-- Skill Overview -->
+  <div class="col-md-9 col-lg-10">
+    <p>test</p>
+  </div>
+</div>

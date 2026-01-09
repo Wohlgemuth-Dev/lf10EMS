@@ -25,6 +25,7 @@ export class AuthService {
     private router: Router
   ) {
     this.configurePromise = this.configure();
+    console.log("")
   }
 
   private async configure() {
@@ -64,7 +65,9 @@ export class AuthService {
 
   public async handleCallback(): Promise<boolean> {
     try {
+      console.log("Test before configure")
       await this.configurePromise;
+      console.log("Test after configure")
       await this.oauthService.tryLogin();
       return this.hasValidToken();
     } catch (error) {
