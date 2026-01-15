@@ -34,10 +34,12 @@ export class EmployeeInspectorComponent implements OnInit{
       });
   }
 
-  private convertEmployee(emp: Employee): Record<string, any> {
+  private convertEmployee(emp: Employee): Record<string, any>
+  {
     // Convert skillSet array to comma-separated string
     const converted: Record<string, any> = { ...emp };
-    if (emp.skillSet?.length) {
+    if (emp.skillSet?.length)
+    {
       converted['skillSet'] = emp.skillSet
         .map(s => s.skill)
         .filter(Boolean)

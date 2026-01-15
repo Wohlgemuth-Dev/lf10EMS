@@ -4,7 +4,7 @@ import { Employee } from "../../model/Employee";
 import { Router } from "@angular/router";
 import { DbService } from "../../services/db.service";
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-employee-list',
@@ -39,10 +39,11 @@ export class EmployeeListComponent {
   }
 
   getSortedEmployees(): Observable<Employee[]> {
-    return this.db.employees$.pipe(
-      map(employees => {
-        if (!employees) return [];
-        return [...employees].sort((a, b) => {
+    return combineLatest([this.db.employees$, this.db.selectedSkillIds$]).pipe(
+      map(([employees, selectedSkillIds]) => {
+        const filtered = (employees ?? []).filter(e => this.matchesSkillFilter(e, selectedSkillIds)); //zeigt nur gefilterte an
+
+        return [...filtered].sort((a, b) => {
           let valueA: string | number | undefined;
           let valueB: string | number | undefined;
 
@@ -72,6 +73,7 @@ export class EmployeeListComponent {
       })
     );
   }
+
 
   getSortIcon(column: string): string {
     if (this.sortColumn !== column) return 'bi-arrow-down-up';
@@ -103,4 +105,23 @@ export class EmployeeListComponent {
         }
       });
   }
+
+  private matchesSkillFilter(emp: Employee, selectedIds: number[]): boolean
+  {
+    if (!selectedIds.length) //Damit nur gefiltert wird, wenn was angeklickt ist
+    {
+      return true; //true = zeig alle an
+    }
+
+    //holt sich die skill ids, wenns ein skillobject ist dann s.id
+    const empSkillIds = (emp as any).skillSet ?? [];
+    const ids: number[] = empSkillIds
+      .map((s: any) => typeof s === 'object' ? s.id : s)
+      .filter((x: any) => typeof x === 'number');
+
+    //zeigt alle an bei denen alle ausgewählten skills zutreffen
+    return selectedIds.every(id => ids.includes(id));
+
+  }
+
 }

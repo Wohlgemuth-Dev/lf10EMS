@@ -11,7 +11,10 @@ import { Skill } from "../model/Skill";
 })
 export class DbService {
   private employeesSubject = new BehaviorSubject<Employee[]>([]);
-  public employees$ = this.employeesSubject.asObservable();
+  public employees$ = this.employeesSubject.asObservable(); //employees als Observable um immer die gleichen zu lesen
+  private selectedSkillIdsSubject = new BehaviorSubject<number[]>([]); //Behavioursubject speichert die selected skills ein
+  public selectedSkillIds$ = this.selectedSkillIdsSubject.asObservable(); //lesbare version des BehaviourSubjects als observable für htmls
+
 
   public skills$: Observable<Skill[]>
   private token: string | string[];
@@ -76,5 +79,15 @@ export class DbService {
         .set('Content-Type', 'application/json')
         .set('Authorization', `Bearer ${this.token}`)
     });
+  }
+
+  toggleSkillFilter(skillId: number, checked: boolean) {
+    const current = this.selectedSkillIdsSubject.value; //holen uns die derzeitigen Filterstand
+
+    const next = checked //wenn checked true ist wird der Skill hinzugefügt, wenn falls dann wird er rausgeschmissen
+      ? Array.from(new Set([...current, skillId]))
+      : current.filter(id => id !== skillId);
+
+    this.selectedSkillIdsSubject.next(next); //neuen zustand speichern
   }
 }

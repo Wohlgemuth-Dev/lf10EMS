@@ -13,4 +13,15 @@ export class FilterComponent {
   constructor(protected db: DbService) {
     db.fetchQualifications()
   }
+
+  onToggle(skillId: number | undefined, event: Event)
+  {
+    if (skillId == null)
+    {
+      return;
+    }
+    const checked = (event.target as HTMLInputElement).checked; //Den status von der Html box in boolean speichern
+    this.db.toggleSkillFilter(skillId, checked);
+  }
+
 }
