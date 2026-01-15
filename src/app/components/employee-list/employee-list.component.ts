@@ -92,8 +92,7 @@ export class EmployeeListComponent {
   }
 
   deleteEmployee(id: number | undefined){
-    this.db.deleteEmployee(id)
-    this.db.fetchEmployees();
+    this.db.deleteEmployee(id);
   }
 
   navigateToEmployeeInspector(id: number | undefined) {
