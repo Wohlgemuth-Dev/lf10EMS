@@ -1,3 +1,5 @@
+import {Skill} from "./Skill";
+
 export class Employee {
   constructor(public id?: number,
               public lastName?: string,
@@ -6,6 +8,7 @@ export class Employee {
               public postcode?: string,
               public city?: string,
               public phone?: string,
-              public skillSet?: number[]) {
+              public skillSet?: Skill[]
+  ) {
   }
 }
