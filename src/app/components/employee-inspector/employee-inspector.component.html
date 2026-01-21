@@ -11,48 +11,69 @@
           </button>
         </div>
         <div class="card-body">
-          <div class="mb-3 row align-items-center">
-            <label class="col-sm-3 col-form-label fw-bold text-muted">Name</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" [(ngModel)]="employee.lastName" *ngIf="isEditing">
-              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.lastName }}</span>
+          <form #employeeForm="ngForm">
+            <div class="mb-3 row align-items-center">
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Name</label>
+              <div class="col-sm-9">
+                <ng-container *ngIf="isEditing">
+                  <input type="text" class="form-control" [(ngModel)]="employee.lastName" name="lastName" required
+                    #lastName="ngModel" [class.is-invalid]="lastName.invalid && lastName.touched">
+                  <div class="invalid-feedback" *ngIf="lastName.invalid && lastName.touched">
+                    Name is required.
+                  </div>
+                </ng-container>
+                <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.lastName }}</span>
+              </div>
             </div>
-          </div>
-          <div class="mb-3 row align-items-center">
-            <label class="col-sm-3 col-form-label fw-bold text-muted">Vorname</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" [(ngModel)]="employee.firstName" *ngIf="isEditing">
-              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.firstName }}</span>
+            <div class="mb-3 row align-items-center">
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Vorname</label>
+              <div class="col-sm-9">
+                <ng-container *ngIf="isEditing">
+                  <input type="text" class="form-control" [(ngModel)]="employee.firstName" name="firstName" required
+                    #firstName="ngModel" [class.is-invalid]="firstName.invalid && firstName.touched">
+                  <div class="invalid-feedback" *ngIf="firstName.invalid && firstName.touched">
+                    Vorname is required.
+                  </div>
+                </ng-container>
+                <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.firstName }}</span>
+              </div>
             </div>
-          </div>
-          <div class="mb-3 row align-items-center">
-            <label class="col-sm-3 col-form-label fw-bold text-muted">Phone</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" [(ngModel)]="employee.phone" *ngIf="isEditing">
-              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.phone }}</span>
+            <div class="mb-3 row align-items-center">
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Phone</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="employee.phone" name="phone" *ngIf="isEditing">
+                <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.phone }}</span>
+              </div>
             </div>
-          </div>
-          <div class="mb-3 row align-items-center">
-            <label class="col-sm-3 col-form-label fw-bold text-muted">Straße</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" [(ngModel)]="employee.street" *ngIf="isEditing">
-              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.street }}</span>
+            <div class="mb-3 row align-items-center">
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Straße</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="employee.street" name="street" *ngIf="isEditing">
+                <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.street }}</span>
+              </div>
             </div>
-          </div>
-          <div class="mb-3 row align-items-center">
-            <label class="col-sm-3 col-form-label fw-bold text-muted">PLZ</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" [(ngModel)]="employee.postcode" *ngIf="isEditing">
-              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.postcode }}</span>
+            <div class="mb-3 row align-items-center">
+              <label class="col-sm-3 col-form-label fw-bold text-muted">PLZ</label>
+              <div class="col-sm-9">
+                <ng-container *ngIf="isEditing">
+                  <input type="text" class="form-control" [(ngModel)]="employee.postcode" name="postcode" required
+                    minlength="5" maxlength="5" pattern="[0-9]{5}" #postcode="ngModel"
+                    [class.is-invalid]="postcode.invalid && postcode.touched">
+                  <div class="invalid-feedback" *ngIf="postcode.invalid && postcode.touched">
+                    Postcode must be exactly 5 digits.
+                  </div>
+                </ng-container>
+                <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.postcode }}</span>
+              </div>
             </div>
-          </div>
-          <div class="mb-3 row align-items-center">
-            <label class="col-sm-3 col-form-label fw-bold text-muted">Stadt</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" [(ngModel)]="employee.city" *ngIf="isEditing">
-              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.city }}</span>
+            <div class="mb-3 row align-items-center">
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Stadt</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="employee.city" name="city" *ngIf="isEditing">
+                <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.city }}</span>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

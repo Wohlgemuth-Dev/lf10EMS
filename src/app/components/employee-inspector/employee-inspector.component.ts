@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { Employee } from "../../model/Employee";
 import { DbService } from "../../services/db.service";
 import { filter, switchMap } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { map } from "rxjs/operators";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, NgForm } from "@angular/forms";
 import { Skill } from "../../model/Skill";
 
 @Component({
@@ -31,18 +31,23 @@ export class EmployeeInspectorComponent implements OnInit {
 
   ngOnInit(): void {
     // Load employee
-    this.route.queryParamMap
-      .pipe(
-        map(params => Number(params.get('id'))),
-        filter(id => !isNaN(id)),
-        switchMap(id => this.db.getEmployee(id))
-      )
-      .subscribe(emp => {
-        this.employee = emp;
-        if (!this.employee.skillSet) {
-          this.employee.skillSet = [];
+    this.route.queryParamMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (idParam) {
+        const id = Number(idParam);
+        if (!isNaN(id)) {
+          this.db.getEmployee(id).subscribe(emp => {
+            this.employee = emp;
+            if (!this.employee.skillSet) this.employee.skillSet = [];
+          });
+          return;
         }
-      });
+      }
+      // No ID or invalid ID -> New Employee Mode
+      this.isEditing = true;
+      this.employee = new Employee();
+      this.employee.skillSet = [];
+    });
 
     // Load available skills
     this.db.skills$.subscribe(skills => { // skills$ is an Observable in DbService
@@ -62,7 +67,17 @@ export class EmployeeInspectorComponent implements OnInit {
         this.db.updateEmployee(this.employee);
       } else {
         this.db.createEmployee(this.employee);
+
       }
+      // Optionally navigate back or stay?
+      // For now, let's keep editing mode off after save?
+      // But db calls are async. Ideally we wait. 
+      // Given the current service implementation (void return on methods, subscription inside), we can't easily wait here without changing service.
+      // But DbService fetches employees after update using subscribe.
+
+      // We will assume success for UI toggle, or better:
+      // If we are creating new, we should probably navigate back to list or reload with ID?
+      // Let's just toggle isEditing off.
     }
     this.isEditing = !this.isEditing;
   }

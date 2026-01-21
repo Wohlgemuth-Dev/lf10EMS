@@ -4,7 +4,7 @@ import { Employee } from "../../model/Employee";
 import { Router } from "@angular/router";
 import { DbService } from "../../services/db.service";
 import { map } from 'rxjs/operators';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-employee-list',
@@ -81,19 +81,10 @@ export class EmployeeListComponent {
   }
 
   addEmployee() {
-    const dummyEmployee: Employee = new Employee(
-      undefined,
-      'Mustermann',
-      'HS',
-      'Musterstraße 1',
-      '12345',
-      'Musterstadt',
-      '+0123456789'
-    );
-    this.db.createEmployee(dummyEmployee)
+    this.router.navigate(['/inspector']);
   }
 
-  deleteEmployee(id: number | undefined){
+  deleteEmployee(id: number | undefined) {
     this.db.deleteEmployee(id);
   }
 
@@ -106,8 +97,7 @@ export class EmployeeListComponent {
       });
   }
 
-  private matchesSkillFilter(emp: Employee, selectedIds: number[]): boolean
-  {
+  private matchesSkillFilter(emp: Employee, selectedIds: number[]): boolean {
     if (!selectedIds.length) //Damit nur gefiltert wird, wenn was angeklickt ist
     {
       return true; //true = zeig alle an

@@ -34,11 +34,48 @@
   opacity: 1;
 }
 
+.card-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100vh - 220px);
+  /* Adjust based on header/padding to fill screen.
+     Navbar (~60px) + Margin (~30px) + Footer (~60px) + Padding (~30px) -> ~180-220px offset needed.
+  */
+}
+
+/* Ideally, the card should take available height of parent. 
+   employees-overview row items usually don't have fixed height unless set.
+   I'll set a min-height or calc height for the list to ensure it's scrollable. */
+
+:host {
+  display: block;
+  height: 100%;
+}
+
 .table-scroll {
+  overflow-y: auto;
+  /* Scroll vertical */
   overflow-x: auto;
+  flex-grow: 1;
+  /* Take remaining space */
 }
 
 .footer-row {
   padding: 1rem;
   border-top: 1px solid #dee2e6;
+  background-color: white;
+  /* Ensure it covers scrolling content if transparent */
+  z-index: 10;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  /* Bootstrap's table-dark sets bg-color, but we ensure it's opaque for sticky behavior */
+  background-color: #212529;
+  color: white;
+  /* Box shadow for better visual separation when scrolling */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
 }
