@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Employee } from "../model/Employee";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { AuthService } from "./auth.service";
-import {BehaviorSubject, Observable, of} from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { Router } from "@angular/router";
 import { Skill } from "../model/Skill";
 
@@ -46,14 +46,35 @@ export class DbService {
 
   createEmployee(employee: Employee) {
     this.token = this.authService.getAccessToken();
+    const payload: any = { ...employee };
+    if (employee.skillSet) {
+      payload.skillSet = employee.skillSet.map(s => s.id);
+    }
 
-    this.http.post('http://localhost:8089/employees', employee, {
+    this.http.post('http://localhost:8089/employees', payload, {
       headers: new HttpHeaders()
         .set('Content-Type', 'application/json')
         .set('Authorization', `Bearer ${this.token}`)
     }).subscribe({
       next: () => this.fetchEmployees(),
-      error: (err: Error) => console.error('Delete failed', err)
+      error: (err: Error) => console.error('Create failed', err)
+    });
+  }
+
+  updateEmployee(employee: Employee) {
+    this.token = this.authService.getAccessToken();
+    const payload: any = { ...employee };
+    if (employee.skillSet) {
+      payload.skillSet = employee.skillSet.map(s => s.id);
+    }
+
+    this.http.put(`http://localhost:8089/employees/${employee.id}`, payload, {
+      headers: new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${this.token}`)
+    }).subscribe({
+      next: () => this.fetchEmployees(),
+      error: (err: Error) => console.error('Update failed', err)
     });
   }
 

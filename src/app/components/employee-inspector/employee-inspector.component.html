@@ -1,8 +1,94 @@
-<div class="row g-4">
-  <!-- Employee Overview -->
-  <div class="col-md-3 col-lg-2">
-    <div *ngFor="let item of employee | keyvalue">
-      <strong>{{ item.key }}:</strong> {{ item.value }}
+<div class="container-fluid py-4" *ngIf="employee">
+  <div class="row g-4">
+    <!-- Left Column: Employee Details -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+          <h5 class="mb-0 fw-bold text-primary">Employee Details</h5>
+          <button class="btn btn-sm btn-outline-primary" (click)="toggleEditMode()">
+            <i class="bi" [class.bi-pencil]="!isEditing" [class.bi-save]="isEditing"></i>
+            {{ isEditing ? 'Save' : 'Edit' }}
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold text-muted">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" [(ngModel)]="employee.lastName" *ngIf="isEditing">
+              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.lastName }}</span>
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold text-muted">Vorname</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" [(ngModel)]="employee.firstName" *ngIf="isEditing">
+              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.firstName }}</span>
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold text-muted">Phone</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" [(ngModel)]="employee.phone" *ngIf="isEditing">
+              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.phone }}</span>
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold text-muted">Straße</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" [(ngModel)]="employee.street" *ngIf="isEditing">
+              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.street }}</span>
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold text-muted">PLZ</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" [(ngModel)]="employee.postcode" *ngIf="isEditing">
+              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.postcode }}</span>
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold text-muted">Stadt</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" [(ngModel)]="employee.city" *ngIf="isEditing">
+              <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.city }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Skills -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+          <h5 class="mb-0 fw-bold text-primary">Skills</h5>
+          <div class="d-flex gap-2" *ngIf="isEditing">
+            <select class="form-select form-select-sm" [(ngModel)]="newSkillId" style="width: auto; min-width: 120px;">
+              <option [ngValue]="null" disabled selected>Select Skill...</option>
+              <option *ngFor="let skill of availableSkills" [value]="skill.id">{{ skill.skill }}</option>
+            </select>
+            <button class="btn btn-sm btn-outline-success" (click)="addSkill()" [disabled]="!newSkillId">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3"
+              *ngFor="let skill of employee.skillSet">
+              <span class="fw-medium">{{ skill.skill }}</span>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteSkill(skill.id)" *ngIf="isEditing">
+                <i class="bi bi-trash"></i>
+              </button>
+            </li>
+            <li class="list-group-item text-muted text-center py-5"
+              *ngIf="!employee.skillSet || employee.skillSet.length === 0">
+              <i class="bi bi-journal-x fs-4 d-block mb-2"></i>
+              No skills assigned
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>
