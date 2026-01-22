@@ -77,25 +77,12 @@ export class SkillManagementComponent implements OnInit {
         }
       }
 
-      this.db.getEmployeesBySkill(skill.id).pipe(
-        take(1),
-        switchMap(employeesToUpdate => {
-          if (employeesToUpdate && employeesToUpdate.length > 0) {
-            const updateObservables = employeesToUpdate.map(emp => {
-              emp.skillSet = emp.skillSet?.filter(s => s.id !== skill.id);
-              return this.db.updateEmployee(emp);
-            });
-            return forkJoin(updateObservables);
-          }
-          return of(null);
-        }),
-        switchMap(() => this.db.deleteSkill(skill.id))
-      ).subscribe({
+      this.db.deleteQualification(skill.id).subscribe({
         next: () => {
           this.db.fetchEmployees();
           this.db.fetchQualifications();
         },
-        error: (err) => console.error('Delete process failed', err)
+        error: (err) => console.error('Delete failed', err)
       });
     }
   }

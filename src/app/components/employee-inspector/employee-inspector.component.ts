@@ -172,32 +172,39 @@ export class EmployeeInspectorComponent implements OnInit {
 
   createNewSkill() {
     if (this.skillSearchText) {
-      this.db.createSkill(this.skillSearchText).subscribe(newSkill => {
-        this.db.fetchQualifications(); // Refresh the list of all skills
-        // The subscription to skills$ will update availableSkills.
-        // We need to add the skill to the employee.
-        if (this.employee) {
-          if (!this.employee.skillSet) {
-            this.employee.skillSet = [];
-          }
-          this.employee.skillSet.push(newSkill);
-          this.db.updateEmployee(this.employee).subscribe(() => {
-            this.updateFilteredSkills();
-            this.db.fetchEmployees();
+      const createAndAssignSkill = (employeeId: number) => {
+        this.db.createSkill(this.skillSearchText).subscribe(newSkill => {
+          this.db.fetchQualifications(); // Refresh the list of all skills
+          this.addSkill(newSkill.id, newSkill);
+          this.skillSearchText = '';
+        });
+      };
+
+      if (this.employee.id) {
+        createAndAssignSkill(this.employee.id);
+      } else {
+        // First, create the employee to get an ID
+        this.db.createEmployee(this.employee).subscribe(newEmployee => {
+          this.employee = newEmployee;
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { id: newEmployee.id },
+            queryParamsHandling: 'merge',
           });
-        }
-        this.skillSearchText = '';
-      });
+          createAndAssignSkill(newEmployee.id!);
+        });
+      }
     }
   }
 
   deleteSkill(skillId: number | undefined) {
-    if (!skillId) return;
-    if (this.employee.skillSet) {
-      this.employee.skillSet = this.employee.skillSet.filter(s => s.id !== skillId);
-      this.db.updateEmployee(this.employee).subscribe(() => {
+    if (!skillId || !this.employee.id) return;
+    this.db.deleteQualificationFromEmployee(this.employee.id, skillId).subscribe(() => {
+      if (this.employee.skillSet) {
+        this.employee.skillSet = this.employee.skillSet.filter(s => s.id !== skillId);
         this.updateFilteredSkills();
-      });
-    }
+        this.db.fetchEmployees();
+      }
+    });
   }
 }

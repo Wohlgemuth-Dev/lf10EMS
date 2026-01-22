@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Employee } from "../model/Employee";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { AuthService } from "./auth.service";
-import { BehaviorSubject, Observable, of } from "rxjs";
+import { BehaviorSubject, Observable, of, forkJoin } from "rxjs";
 import { Router } from "@angular/router";
 import { Skill } from "../model/Skill";
-import { map, tap } from 'rxjs/operators';
+import { map, tap, switchMap, take } from 'rxjs/operators';
 
 interface SkillEmployeesResponse {
   qualification: Skill;
@@ -174,5 +174,51 @@ export class DbService {
       : current.filter(id => id !== skillId);
 
     this.selectedSkillIdsSubject.next(next); //neuen zustand speichern
+  }
+
+  getEmployeeQualifications(employeeId: number): Observable<Skill[]> {
+    this.token = this.authService.getAccessToken();
+    return this.http.get<Skill[]>(`http://localhost:8089/employees/${employeeId}/qualifications`, {
+      headers: new HttpHeaders()
+        .set('Authorization', `Bearer ${this.token}`)
+    });
+  }
+
+  addQualificationToEmployee(employeeId: number, skillId: number): Observable<any> {
+    this.token = this.authService.getAccessToken();
+    return this.http.post(`http://localhost:8089/employees/${employeeId}/qualifications`,  skillId , {
+      headers: new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${this.token}`)
+    });
+  }
+
+  deleteQualificationFromEmployee(employeeId: number, skillId: number): Observable<any> {
+    this.token = this.authService.getAccessToken();
+    return this.http.delete(`http://localhost:8089/employees/${employeeId}/qualifications/${skillId}`, {
+      headers: new HttpHeaders()
+        .set('Authorization', `Bearer ${this.token}`)
+    });
+  }
+
+  deleteQualification(id: number): Observable<any> {
+    return this.getEmployeesBySkill(id).pipe(
+      take(1),
+      switchMap(employeesToUpdate => {
+        if (employeesToUpdate && employeesToUpdate.length > 0) {
+          const updateObservables = employeesToUpdate.map(emp => {
+            return this.getEmployee(emp.id!).pipe(
+              switchMap(fullEmployee => {
+                fullEmployee.skillSet = fullEmployee.skillSet?.filter(s => s.id !== id);
+                return this.updateEmployee(fullEmployee);
+              })
+            );
+          });
+          return forkJoin(updateObservables);
+        }
+        return of(null);
+      }),
+      switchMap(() => this.deleteSkill(id))
+    );
   }
 }
