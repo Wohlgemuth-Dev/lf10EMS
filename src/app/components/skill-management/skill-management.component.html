@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <div class="card" style="display: flex; flex-direction: column;">
+    <div class="card-header">
+      <h2>Skill Management</h2>
+    </div>
+    <div class="p-2 border-bottom">
+      <input
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="Search skills..."
+        [ngModel]="skillSearchText.getValue()"
+        (ngModelChange)="onSearchChange($event)"
+      >
+    </div>
+    <div class="card-body" style="flex-grow: 1; overflow-y: auto; max-height: calc(100vh - 350px);">
+      <ul class="list-group">
+        <li *ngFor="let skill of skills$ | async" class="list-group-item d-flex justify-content-between align-items-center">
+            <div *ngIf="!skill.editing">
+              {{ skill.skill }}
+            </div>
+            <div *ngIf="skill.editing">
+              <input type="text" [(ngModel)]="skill.newName" class="form-control" (keyup.enter)="updateSkill(skill)" #editInput>
+            </div>
+            <div>
+              <span class="badge bg-primary rounded-pill me-2">{{ skill.count }}</span>
+              <button *ngIf="!skill.editing" class="btn btn-outline-primary btn-sm me-2" (click)="toggleEdit(skill)">Edit</button>
+              <button *ngIf="skill.editing" class="btn btn-outline-primary btn-sm me-2" (click)="updateSkill(skill)">Save</button>
+              <button class="btn btn-outline-danger btn-sm" (click)="deleteSkill(skill)">Delete</button>
+            </div>
+          </li>
+
+      </ul>
+    </div>
+    <div class="card-footer">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="New Skill Name" [(ngModel)]="newSkillName" (keyup.enter)="addSkill()">
+        <button class="btn btn-outline-primary" type="button" (click)="addSkill()">Add Skill</button>
+      </div>
+    </div>
+  </div>
+</div>
+
