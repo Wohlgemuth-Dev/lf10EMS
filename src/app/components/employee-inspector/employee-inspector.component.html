@@ -3,8 +3,8 @@
     <!-- Left Column: Employee Details -->
     <div class="col-md-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-          <h5 class="mb-0 fw-bold text-primary">Employee Details</h5>
+        <div class="card-header d-flex justify-content-between align-items-center py-3" style="background-color: var(--secondary-color); color: white;">
+          <h5 class="mb-0 fw-bold">Employee Details</h5>
           <button class="btn btn-sm btn-outline-primary" (click)="toggleEditMode()">
             <i class="bi" [class.bi-pencil]="!isEditing" [class.bi-save]="isEditing"></i>
             {{ isEditing ? 'Save' : 'Edit' }}
@@ -81,24 +81,36 @@
     <!-- Right Column: Skills -->
     <div class="col-md-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-          <h5 class="mb-0 fw-bold text-primary">Skills</h5>
-          <div class="d-flex gap-2" *ngIf="isEditing">
-            <select class="form-select form-select-sm" [(ngModel)]="newSkillId" style="width: auto; min-width: 120px;">
-              <option [ngValue]="null" disabled selected>Select Skill...</option>
-              <option *ngFor="let skill of availableSkills" [value]="skill.id">{{ skill.skill }}</option>
-            </select>
-            <button class="btn btn-sm btn-outline-success" (click)="addSkill()" [disabled]="!newSkillId">
-              <i class="bi bi-plus-lg"></i>
+        <div class="card-header d-flex justify-content-between align-items-center py-3" style="background-color: var(--secondary-color); color: white;">
+          <h5 class="mb-0 fw-bold">Skills</h5>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Add Skill
             </button>
+            <ul class="dropdown-menu">
+              <li>
+                <input type="text" class="form-control form-control-sm mx-2 w-auto" placeholder="Search..."
+                       [(ngModel)]="skillSearchText" (ngModelChange)="filterSkillsForDropdown()" (keydown.enter)="handleSkillSearchEnter($event)">
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li *ngIf="showCreateSkill">
+                <a class="dropdown-item" href="#" (click)="createNewSkill(); $event.preventDefault()">Create "{{ skillSearchText }}"</a>
+              </li>
+              <li *ngFor="let skill of dropdownSkills">
+                <a class="dropdown-item" href="#" (click)="addSkill(skill.id); $event.preventDefault()">{{ skill.skill ?? '' }}</a>
+              </li>
+              <li *ngIf="dropdownSkills.length === 0">
+                <span class="dropdown-item-text text-muted">No skills found</span>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="card-body p-0">
           <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center py-3"
               *ngFor="let skill of employee.skillSet">
-              <span class="fw-medium">{{ skill.skill }}</span>
-              <button class="btn btn-sm btn-outline-danger" (click)="deleteSkill(skill.id)" *ngIf="isEditing">
+              <span class="fw-medium">{{ skill.skill ?? '' }}</span>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteSkill(skill.id)">
                 <i class="bi bi-trash"></i>
               </button>
             </li>

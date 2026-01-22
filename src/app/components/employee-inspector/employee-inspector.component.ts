@@ -1,11 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
 import { Employee } from "../../model/Employee";
 import { DbService } from "../../services/db.service";
-import { filter, switchMap } from "rxjs";
 import { CommonModule } from "@angular/common";
-import { map } from "rxjs/operators";
-import { FormsModule, NgForm } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { Skill } from "../../model/Skill";
 
 @Component({
@@ -21,12 +19,17 @@ import { Skill } from "../../model/Skill";
 export class EmployeeInspectorComponent implements OnInit {
   employee: Employee = new Employee();
   availableSkills: Skill[] = [];
+  filteredSkills: Skill[] = [];
   isEditing: boolean = false;
   newSkillId: number | null = null;
+  skillSearchText: string = '';
+  dropdownSkills: Skill[] = [];
+  showCreateSkill: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
-    private db: DbService
+    private db: DbService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -39,6 +42,8 @@ export class EmployeeInspectorComponent implements OnInit {
           this.db.getEmployee(id).subscribe(emp => {
             this.employee = emp;
             if (!this.employee.skillSet) this.employee.skillSet = [];
+            this.updateFilteredSkills();
+            this.filterSkillsForDropdown();
           });
           return;
         }
@@ -50,51 +55,117 @@ export class EmployeeInspectorComponent implements OnInit {
     });
 
     // Load available skills
-    this.db.skills$.subscribe(skills => { // skills$ is an Observable in DbService
+    this.db.skills$.subscribe(skills => {
+      this.availableSkills = skills;
+      this.updateFilteredSkills();
+      this.filterSkillsForDropdown();
       if (skills.length === 0) {
         this.db.fetchQualifications(); // Trigger fetch if empty
       }
     });
-    // Subscribe again to get the data (or just use the observable in template, but we need it for logic)
-    this.db.skills$.subscribe(skills => this.availableSkills = skills);
     this.db.fetchQualifications(); // Ensure they are fetched
   }
 
   toggleEditMode() {
     if (this.isEditing) {
-      // Save changes
       if (this.employee.id) {
-        this.db.updateEmployee(this.employee);
+        this.db.updateEmployee(this.employee).subscribe(() => {
+          this.isEditing = false;
+        });
       } else {
-        this.db.createEmployee(this.employee);
-
+        this.db.createEmployee(this.employee).subscribe(newEmployee => {
+          this.employee = newEmployee;
+          this.isEditing = false;
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { id: newEmployee.id },
+            queryParamsHandling: 'merge', // or 'preserve'
+          });
+        });
       }
-      // Optionally navigate back or stay?
-      // For now, let's keep editing mode off after save?
-      // But db calls are async. Ideally we wait. 
-      // Given the current service implementation (void return on methods, subscription inside), we can't easily wait here without changing service.
-      // But DbService fetches employees after update using subscribe.
-
-      // We will assume success for UI toggle, or better:
-      // If we are creating new, we should probably navigate back to list or reload with ID?
-      // Let's just toggle isEditing off.
+    } else {
+      this.isEditing = true;
     }
-    this.isEditing = !this.isEditing;
   }
 
-  addSkill() {
-    if (this.newSkillId) {
-      const skillToAdd = this.availableSkills.find(s => s.id == this.newSkillId);
+  handleSkillSearchEnter(event: any): void {
+    event.preventDefault(); // Prevent form submission
+    if (this.showCreateSkill) {
+      this.createNewSkill();
+    } else if (this.dropdownSkills.length > 0) {
+      const topSkill = this.dropdownSkills[0];
+      if (topSkill && topSkill.id) {
+        this.addSkill(topSkill.id);
+      }
+    }
+  }
+
+  filterSkillsForDropdown(): void {
+    if (!this.skillSearchText) {
+      this.dropdownSkills = [...this.filteredSkills];
+      this.showCreateSkill = false;
+    } else {
+      const searchTextLower = this.skillSearchText.toLowerCase();
+      this.dropdownSkills = this.filteredSkills.filter(skill =>
+        skill.skill && skill.skill.toLowerCase().includes(searchTextLower)
+      );
+      const exactMatch = this.availableSkills.some(s => s.skill?.toLowerCase() === searchTextLower);
+      this.showCreateSkill = !exactMatch && this.skillSearchText.length > 0;
+    }
+  }
+
+  updateFilteredSkills() {
+    if (this.employee && this.employee.skillSet) {
+      const assignedSkillIds = new Set(this.employee.skillSet.map(s => s.id));
+      this.filteredSkills = this.availableSkills.filter(s => !assignedSkillIds.has(s.id));
+    } else {
+      this.filteredSkills = this.availableSkills;
+    }
+    this.filterSkillsForDropdown();
+  }
+
+  addSkill(skillId: number | undefined, skillToAdd?: Skill) {
+    if (skillId) {
+      if (!skillToAdd) {
+        skillToAdd = this.availableSkills.find(s => s.id == skillId);
+      }
+
       if (skillToAdd) {
         if (!this.employee.skillSet) {
           this.employee.skillSet = [];
         }
         // Check if already exists
-        if (!this.employee.skillSet.some(s => s.id === skillToAdd.id)) {
+        if (!this.employee.skillSet.some(s => s.id === skillToAdd?.id)) {
           this.employee.skillSet.push(skillToAdd);
+          this.db.updateEmployee(this.employee).subscribe(() => {
+            this.updateFilteredSkills();
+            this.db.fetchEmployees(); // to update the count in skill manager
+          });
         }
       }
       this.newSkillId = null;
+      this.skillSearchText = '';
+    }
+  }
+
+  createNewSkill() {
+    if (this.skillSearchText) {
+      this.db.createSkill(this.skillSearchText).subscribe(newSkill => {
+        this.db.fetchQualifications(); // Refresh the list of all skills
+        // The subscription to skills$ will update availableSkills.
+        // We need to add the skill to the employee.
+        if (this.employee) {
+          if (!this.employee.skillSet) {
+            this.employee.skillSet = [];
+          }
+          this.employee.skillSet.push(newSkill);
+          this.db.updateEmployee(this.employee).subscribe(() => {
+            this.updateFilteredSkills();
+            this.db.fetchEmployees();
+          });
+        }
+        this.skillSearchText = '';
+      });
     }
   }
 
@@ -102,6 +173,9 @@ export class EmployeeInspectorComponent implements OnInit {
     if (!skillId) return;
     if (this.employee.skillSet) {
       this.employee.skillSet = this.employee.skillSet.filter(s => s.id !== skillId);
+      this.db.updateEmployee(this.employee).subscribe(() => {
+        this.updateFilteredSkills();
+      });
     }
   }
 }

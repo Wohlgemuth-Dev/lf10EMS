@@ -1,0 +1,22 @@
+.skill-list-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.filter-card {
+  min-width: 230px;
+}
+
+.search-bar-container {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 0;
+  z-index: 10;
+}
+
+.card-body {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+}

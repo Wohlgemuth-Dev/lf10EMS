@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Employee } from "../../model/Employee";
 import { Router } from "@angular/router";
 import { DbService } from "../../services/db.service";
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-employee-list',
@@ -29,7 +29,6 @@ export class EmployeeListComponent {
 
   sort(column: string) {
     if (this.sortColumn === column) {
-      // Toggle direction if same column
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortColumn = column;
@@ -41,7 +40,9 @@ export class EmployeeListComponent {
   getSortedEmployees(): Observable<Employee[]> {
     return combineLatest([this.db.employees$, this.db.selectedSkillIds$]).pipe(
       map(([employees, selectedSkillIds]) => {
-        const filtered = (employees ?? []).filter(e => this.matchesSkillFilter(e, selectedSkillIds)); //zeigt nur gefilterte an
+        const filtered = selectedSkillIds.length > 0
+          ? (employees ?? []).filter(e => this.matchesSkillFilter(e, selectedSkillIds))
+          : employees;
 
         return [...filtered].sort((a, b) => {
           let valueA: string | number | undefined;
@@ -98,20 +99,11 @@ export class EmployeeListComponent {
   }
 
   private matchesSkillFilter(emp: Employee, selectedIds: number[]): boolean {
-    if (!selectedIds.length) //Damit nur gefiltert wird, wenn was angeklickt ist
-    {
-      return true; //true = zeig alle an
+    if (!selectedIds.length) {
+      return true;
     }
-
-    //holt sich die skill ids, wenns ein skillobject ist dann s.id
-    const empSkillIds = (emp as any).skillSet ?? [];
-    const ids: number[] = empSkillIds
-      .map((s: any) => typeof s === 'object' ? s.id : s)
-      .filter((x: any) => typeof x === 'number');
-
-    //zeigt alle an bei denen alle ausgewählten skills zutreffen
-    return selectedIds.every(id => ids.includes(id));
-
+    const empSkillIds = new Set(emp.skillSet?.map(s => s.id));
+    return selectedIds.every(id => empSkillIds.has(id));
   }
 
 }

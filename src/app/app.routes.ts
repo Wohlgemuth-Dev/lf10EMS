@@ -6,6 +6,7 @@ import {HomeComponent} from "./components/home/home.component";
 import {ImpressumComponent} from "./components/impressum/impressum.component";
 import {EmployeesOverviewComponent} from "./components/employees-overview/employees-overview.component";
 import {EmployeeInspectorComponent} from "./components/employee-inspector/employee-inspector.component";
+import {SkillManagementComponent} from "./components/skill-management/skill-management.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -13,5 +14,6 @@ export const routes: Routes = [
   { path: 'employees', component: EmployeesOverviewComponent, canActivate: [authGuard]},
   { path: 'impressum', component: ImpressumComponent },
   { path: 'inspector', component: EmployeeInspectorComponent },
+  { path: 'skills', component: SkillManagementComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' }
 ];

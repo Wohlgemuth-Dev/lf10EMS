@@ -1,0 +1,27 @@
+.overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.employee-list-container {
+  width: 100%;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+@media (min-width: 768px) {
+  .overview-container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .filter-container {
+    width: 250px;
+    flex-shrink: 0; /* Prevents the filter from shrinking */
+  }
+
+  .employee-list-container {
+    flex-grow: 1;
+  }
+}
+

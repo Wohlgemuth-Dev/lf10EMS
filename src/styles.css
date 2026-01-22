@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-color: #007EC1;
+  --secondary-color: #00406E;
+
+  --bs-primary: var(--primary-color);
+  --bs-primary-rgb: 0, 126, 193;
+  --bs-link-color: var(--primary-color);
+  --bs-link-hover-color: var(--secondary-color);
+}
+
+body {
+  padding-top: 70px;
+  padding-bottom: 70px;
+}
+
+@media (max-width: 509.5px) {
+  body {
+    padding-top: 105px; /* Increased padding for smaller screens */
+  }
+}
+
+@media (max-width: 365px) {
+  body {
+    padding-top: 140px; /* Increased padding for smaller screens */
+  }
+}

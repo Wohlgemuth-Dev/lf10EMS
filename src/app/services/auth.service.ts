@@ -25,7 +25,6 @@ export class AuthService {
     private router: Router
   ) {
     this.configurePromise = this.configure();
-    console.log("")
   }
 
   private async configure() {
