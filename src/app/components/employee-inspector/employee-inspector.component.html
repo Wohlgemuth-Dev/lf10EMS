@@ -3,7 +3,8 @@
     <!-- Left Column: Employee Details -->
     <div class="col-md-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header d-flex justify-content-between align-items-center py-3" style="background-color: var(--secondary-color); color: white;">
+        <div class="card-header d-flex justify-content-between align-items-center py-3"
+          style="background-color: var(--secondary-color); color: white;">
           <h5 class="mb-0 fw-bold">Employee Details</h5>
           <button class="btn btn-sm btn-outline-primary" (click)="toggleEditMode()">
             <i class="bi" [class.bi-pencil]="!isEditing" [class.bi-save]="isEditing"></i>
@@ -13,26 +14,26 @@
         <div class="card-body">
           <form #employeeForm="ngForm">
             <div class="mb-3 row align-items-center">
-              <label class="col-sm-3 col-form-label fw-bold text-muted">Name</label>
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Last Name</label>
               <div class="col-sm-9">
                 <ng-container *ngIf="isEditing">
                   <input type="text" class="form-control" [(ngModel)]="employee.lastName" name="lastName" required
                     #lastName="ngModel" [class.is-invalid]="lastName.invalid && lastName.touched">
                   <div class="invalid-feedback" *ngIf="lastName.invalid && lastName.touched">
-                    Name is required.
+                    Last Name is required.
                   </div>
                 </ng-container>
                 <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.lastName }}</span>
               </div>
             </div>
             <div class="mb-3 row align-items-center">
-              <label class="col-sm-3 col-form-label fw-bold text-muted">Vorname</label>
+              <label class="col-sm-3 col-form-label fw-bold text-muted">First Name</label>
               <div class="col-sm-9">
                 <ng-container *ngIf="isEditing">
                   <input type="text" class="form-control" [(ngModel)]="employee.firstName" name="firstName" required
                     #firstName="ngModel" [class.is-invalid]="firstName.invalid && firstName.touched">
                   <div class="invalid-feedback" *ngIf="firstName.invalid && firstName.touched">
-                    Vorname is required.
+                    First Name is required.
                   </div>
                 </ng-container>
                 <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.firstName }}</span>
@@ -41,19 +42,31 @@
             <div class="mb-3 row align-items-center">
               <label class="col-sm-3 col-form-label fw-bold text-muted">Phone</label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" [(ngModel)]="employee.phone" name="phone" *ngIf="isEditing">
+                <ng-container *ngIf="isEditing">
+                  <input type="text" class="form-control" [(ngModel)]="employee.phone" name="phone" required
+                    #phone="ngModel" [class.is-invalid]="phone.invalid && phone.touched">
+                  <div class="invalid-feedback" *ngIf="phone.invalid && phone.touched">
+                    Phone is required.
+                  </div>
+                </ng-container>
                 <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.phone }}</span>
               </div>
             </div>
             <div class="mb-3 row align-items-center">
-              <label class="col-sm-3 col-form-label fw-bold text-muted">Straße</label>
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Street</label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" [(ngModel)]="employee.street" name="street" *ngIf="isEditing">
+                <ng-container *ngIf="isEditing">
+                  <input type="text" class="form-control" [(ngModel)]="employee.street" name="street" required
+                    #street="ngModel" [class.is-invalid]="street.invalid && street.touched">
+                  <div class="invalid-feedback" *ngIf="street.invalid && street.touched">
+                    Street is required.
+                  </div>
+                </ng-container>
                 <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.street }}</span>
               </div>
             </div>
             <div class="mb-3 row align-items-center">
-              <label class="col-sm-3 col-form-label fw-bold text-muted">PLZ</label>
+              <label class="col-sm-3 col-form-label fw-bold text-muted">Postcode</label>
               <div class="col-sm-9">
                 <ng-container *ngIf="isEditing">
                   <input type="text" class="form-control" [(ngModel)]="employee.postcode" name="postcode" required
@@ -67,13 +80,25 @@
               </div>
             </div>
             <div class="mb-3 row align-items-center">
-              <label class="col-sm-3 col-form-label fw-bold text-muted">Stadt</label>
+              <label class="col-sm-3 col-form-label fw-bold text-muted">City</label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" [(ngModel)]="employee.city" name="city" *ngIf="isEditing">
+                <ng-container *ngIf="isEditing">
+                  <input type="text" class="form-control" [(ngModel)]="employee.city" name="city" required
+                    #city="ngModel" [class.is-invalid]="city.invalid && city.touched">
+                  <div class="invalid-feedback" *ngIf="city.invalid && city.touched">
+                    City is required.
+                  </div>
+                </ng-container>
                 <span *ngIf="!isEditing" class="Detail-value fw-medium">{{ employee.city }}</span>
               </div>
             </div>
           </form>
+
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0 d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div>{{ errorMessage }}</div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -81,23 +106,30 @@
     <!-- Right Column: Skills -->
     <div class="col-md-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header d-flex justify-content-between align-items-center py-3" style="background-color: var(--secondary-color); color: white;">
+        <div class="card-header d-flex justify-content-between align-items-center py-3"
+          style="background-color: var(--secondary-color); color: white;">
           <h5 class="mb-0 fw-bold">Skills</h5>
           <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
               Add Skill
             </button>
             <ul class="dropdown-menu">
               <li>
                 <input type="text" class="form-control form-control-sm mx-2 w-auto" placeholder="Search..."
-                       [(ngModel)]="skillSearchText" (ngModelChange)="filterSkillsForDropdown()" (keydown.enter)="handleSkillSearchEnter($event)">
+                  [(ngModel)]="skillSearchText" (ngModelChange)="filterSkillsForDropdown()"
+                  (keydown.enter)="handleSkillSearchEnter($event)">
               </li>
-              <li><hr class="dropdown-divider"></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
               <li *ngIf="showCreateSkill">
-                <a class="dropdown-item" href="#" (click)="createNewSkill(); $event.preventDefault()">Create "{{ skillSearchText }}"</a>
+                <a class="dropdown-item" href="#" (click)="createNewSkill(); $event.preventDefault()">Create "{{
+                  skillSearchText }}"</a>
               </li>
               <li *ngFor="let skill of dropdownSkills">
-                <a class="dropdown-item" href="#" (click)="addSkill(skill.id); $event.preventDefault()">{{ skill.skill ?? '' }}</a>
+                <a class="dropdown-item" href="#" (click)="addSkill(skill.id); $event.preventDefault()">{{ skill.skill
+                  ?? '' }}</a>
               </li>
               <li *ngIf="dropdownSkills.length === 0">
                 <span class="dropdown-item-text text-muted">No skills found</span>

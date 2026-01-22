@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Employee } from "../../model/Employee";
 import { DbService } from "../../services/db.service";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, NgForm } from "@angular/forms";
 import { Skill } from "../../model/Skill";
 
 @Component({
@@ -66,21 +66,43 @@ export class EmployeeInspectorComponent implements OnInit {
     this.db.fetchQualifications(); // Ensure they are fetched
   }
 
+  @ViewChild('employeeForm') employeeForm!: NgForm;
+  errorMessage: string | null = null;
+
   toggleEditMode() {
+    this.errorMessage = null; // Reset error on action
     if (this.isEditing) {
+      if (this.employeeForm && this.employeeForm.invalid) {
+        this.employeeForm.form.markAllAsTouched();
+        this.errorMessage = 'Please fill in all required fields correctly.';
+        return;
+      }
+
       if (this.employee.id) {
-        this.db.updateEmployee(this.employee).subscribe(() => {
-          this.isEditing = false;
+        this.db.updateEmployee(this.employee).subscribe({
+          next: () => {
+            this.isEditing = false;
+          },
+          error: (err) => {
+            console.error('Update failed', err);
+            this.errorMessage = err.error?.message || 'Failed to update employee';
+          }
         });
       } else {
-        this.db.createEmployee(this.employee).subscribe(newEmployee => {
-          this.employee = newEmployee;
-          this.isEditing = false;
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { id: newEmployee.id },
-            queryParamsHandling: 'merge', // or 'preserve'
-          });
+        this.db.createEmployee(this.employee).subscribe({
+          next: (newEmployee) => {
+            this.employee = newEmployee;
+            this.isEditing = false;
+            this.router.navigate([], {
+              relativeTo: this.route,
+              queryParams: { id: newEmployee.id },
+              queryParamsHandling: 'merge', // or 'preserve'
+            });
+          },
+          error: (err) => {
+            console.error('Create failed', err);
+            this.errorMessage = err.error?.message || 'Failed to create employee';
+          }
         });
       }
     } else {
