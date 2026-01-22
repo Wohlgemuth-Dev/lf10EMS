@@ -79,8 +79,9 @@ export class DbService {
   createEmployee(employee: Employee): Observable<Employee> {
     this.token = this.authService.getAccessToken();
     const payload: any = { ...employee };
-    if (employee.skillSet) {
-      payload.skillSet = employee.skillSet.map(s => s.id);
+    // The skillSet is already an array of IDs when coming from the sample data generation
+    if (employee.skillSet && employee.skillSet.length > 0 && typeof employee.skillSet[0] === 'object') {
+      payload.skillSet = employee.skillSet.map((s: any) => s.id);
     }
 
     return this.http.post<Employee>('http://localhost:8089/employees', payload, {

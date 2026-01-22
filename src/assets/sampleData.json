@@ -1,0 +1,118 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "lastName": "Bauer",
+      "firstName": "Peter",
+      "street": "Hauptstr. 1",
+      "postcode": "12345",
+      "city": "Berlin",
+      "phone": "0123-456789",
+      "skillSet": [
+        { "skill": "Java" },
+        { "skill": "Spring" },
+        { "skill": "Angular" }
+      ]
+    },
+    {
+      "id": 2,
+      "lastName": "Schmidt",
+      "firstName": "Anna",
+      "street": "Musterweg 2",
+      "postcode": "54321",
+      "city": "München",
+      "phone": "0987-654321",
+      "skillSet": [
+        { "skill": "JavaScript" },
+        { "skill": "Angular" },
+        { "skill": "TypeScript" },
+        { "skill": "Vue.js" }
+      ]
+    },
+    {
+      "id": 3,
+      "lastName": "Müller",
+      "firstName": "Thomas",
+      "street": "Beispielallee 3",
+      "postcode": "67890",
+      "city": "Hamburg",
+      "phone": "0111-222333",
+      "skillSet": [
+        { "skill": "Python" },
+        { "skill": "Django" },
+        { "skill": "JavaScript" }
+      ]
+    },
+    {
+      "id": 4,
+      "lastName": "Weber",
+      "firstName": "Laura",
+      "street": "Testgasse 4",
+      "postcode": "09876",
+      "city": "Köln",
+      "phone": "0444-555666",
+      "skillSet": [
+        { "skill": "C#" },
+        { "skill": ".NET" },
+        { "skill": "JavaScript" }
+      ]
+    },
+    {
+      "id": 5,
+      "lastName": "Koch",
+      "firstName": "Michael",
+      "street": "Feldweg 5",
+      "postcode": "13579",
+      "city": "Frankfurt",
+      "phone": "0777-888999",
+      "skillSet": [
+        { "skill": "PHP" },
+        { "skill": "Laravel" },
+        { "skill": "JavaScript" }
+      ]
+    },
+    {
+      "id": 6,
+      "lastName": "Wunderlich",
+      "firstName": "Sabine",
+      "street": "Gartenweg 6",
+      "postcode": "24680",
+      "city": "Stuttgart",
+      "phone": "0666-777888",
+      "skillSet": [
+        { "skill": "TypeScript" },
+        { "skill": "Vue.js" },
+        { "skill": "Angular" }
+      ]
+    },
+    {
+      "id": 7,
+      "lastName": "Klein",
+      "firstName": "Markus",
+      "street": "Waldstr. 7",
+      "postcode": "97531",
+      "city": "Düsseldorf",
+      "phone": "0555-444333",
+      "skillSet": [
+        { "skill": "Ruby" },
+        { "skill": "Rails" },
+        { "skill": "JavaScript" }
+      ]
+    },
+    {
+      "id": 8,
+      "lastName": "Groß",
+      "firstName": "Julia",
+      "street": "Seestr. 8",
+      "postcode": "86420",
+      "city": "Leipzig",
+      "phone": "0222-111000",
+      "skillSet": [
+        { "skill": "Swift" },
+        { "skill": "iOS" },
+        { "skill": "Java" }
+      ]
+    }
+  ]
+}
+

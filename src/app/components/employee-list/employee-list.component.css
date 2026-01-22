@@ -81,3 +81,10 @@
 .table-dark th:last-child {
   border-top-right-radius: 0.375rem;
 }
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
