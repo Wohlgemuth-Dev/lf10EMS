@@ -9,18 +9,7 @@
 }
 
 body {
-  padding-top: 70px;
+  padding-top: var(--navbar-height, 70px);
   padding-bottom: 70px;
 }
 
-@media (max-width: 676px) {
-  body {
-    padding-top: 105px; /* Increased padding for smaller screens */
-  }
-}
-
-@media (max-width: 460px) {
-  body {
-    padding-top: 140px; /* Increased padding for smaller screens */
-  }
-}

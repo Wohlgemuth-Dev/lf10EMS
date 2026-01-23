@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Router, RouterLink, RouterOutlet, ActivatedRoute, NavigationEnd} from "@angular/router";
 import {AuthService} from "./services/auth.service";
@@ -15,8 +15,8 @@ import {Skill} from "./model/Skill";
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
-  title =  "lf10StarterNew";
+export class AppComponent implements OnInit, AfterViewInit {
+  @ViewChild('navbar') navbar!: ElementRef;
   showGenerateDataButton = false;
 
   constructor(
@@ -24,7 +24,8 @@ export class AppComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     protected authService: AuthService,
     private dbService: DbService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -36,6 +37,17 @@ export class AppComponent implements OnInit {
       const isEmployeesPage = event.urlAfterRedirects.startsWith('/employees');
       this.showGenerateDataButton = isAdmin && isEmployeesPage;
     });
+  }
+
+  ngAfterViewInit() {
+    this.updateNavbarHeight();
+    new ResizeObserver(() => this.updateNavbarHeight()).observe(this.navbar.nativeElement);
+  }
+
+  updateNavbarHeight() {
+    const navbarHeight = this.navbar.nativeElement.offsetHeight;
+    document.documentElement.style.setProperty('--navbar-height', `${navbarHeight}px`);
+    this.cdr.detectChanges();
   }
 
   generateSampleData() {

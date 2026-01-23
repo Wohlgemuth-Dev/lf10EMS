@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {DbService} from "../../services/db.service";
 import {RouterModule} from "@angular/router";
@@ -14,31 +14,25 @@ import {Skill} from "../../model/Skill";
   styleUrl: './filter.component.css'
 })
 export class FilterComponent {
-  skillSearchText = new BehaviorSubject<string>('');
   filteredSkills$: Observable<Skill[]>;
+  searchTerm$ = new BehaviorSubject<string>('');
 
   constructor(protected db: DbService) {
-    db.fetchQualifications();
-
     this.filteredSkills$ = combineLatest([
       this.db.skills$,
-      this.skillSearchText
+      this.searchTerm$
     ]).pipe(
-      map(([skills, searchText]) => {
-        const sortedSkills = [...skills].sort((a, b) => (a.skill || '').localeCompare(b.skill || ''));
-
-        if (!searchText) {
-          return sortedSkills;
-        }
-        return sortedSkills.filter(skill =>
-          skill.skill?.toLowerCase().includes(searchText.toLowerCase())
+      map(([skills, term]) => {
+        const lowerCaseTerm = term.toLowerCase();
+        return skills.filter(skill =>
+          skill.skill?.toLowerCase().includes(lowerCaseTerm)
         );
       })
     );
   }
 
-  onSearchChange(searchText: string) {
-    this.skillSearchText.next(searchText);
+  onSearchTermChanged(term: string) {
+    this.searchTerm$.next(term);
   }
 
   onToggle(skillId: number | undefined, event: Event)

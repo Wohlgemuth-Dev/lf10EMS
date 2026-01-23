@@ -3,7 +3,7 @@
     <!-- Left Column: Employee Details -->
     <div class="col-md-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header d-flex justify-content-between align-items-center py-3"
+        <div class="card-header d-flex justify-content-between align-items-center py-2"
           style="background-color: var(--secondary-color); color: white;">
           <h5 class="mb-0 fw-bold">Employee Details</h5>
           <button class="btn btn-sm btn-outline-primary" (click)="toggleEditMode()">
@@ -106,7 +106,7 @@
     <!-- Right Column: Skills -->
     <div class="col-md-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header d-flex justify-content-between align-items-center py-3"
+        <div class="card-header d-flex justify-content-between align-items-center py-2"
           style="background-color: var(--secondary-color); color: white;">
           <h5 class="mb-0 fw-bold">Skills</h5>
           <div class="dropdown">
@@ -114,26 +114,25 @@
               aria-expanded="false">
               Add Skill
             </button>
-            <ul class="dropdown-menu">
-              <li>
-                <input type="text" class="form-control form-control-sm mx-2 w-auto" placeholder="Search..."
+            <ul class="dropdown-menu skill-dropdown-menu">
+              <div class="skill-dropdown-search">
+                <input type="text" class="form-control form-control-sm" placeholder="Search..."
                   [(ngModel)]="skillSearchText" (ngModelChange)="filterSkillsForDropdown()"
                   (keydown.enter)="handleSkillSearchEnter($event)">
-              </li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li *ngIf="showCreateSkill">
-                <a class="dropdown-item" href="#" (click)="createNewSkill(); $event.preventDefault()">Create "{{
-                  skillSearchText }}"</a>
-              </li>
-              <li *ngFor="let skill of dropdownSkills">
-                <a class="dropdown-item" href="#" (click)="addSkill(skill.id); $event.preventDefault()">{{ skill.skill
-                  ?? '' }}</a>
-              </li>
-              <li *ngIf="dropdownSkills.length === 0">
-                <span class="dropdown-item-text text-muted">No skills found</span>
-              </li>
+              </div>
+              <div class="skill-dropdown-items">
+                <li *ngIf="showCreateSkill">
+                  <a class="dropdown-item" href="#" (click)="createNewSkill(); $event.preventDefault()">Create "{{
+                    skillSearchText }}"</a>
+                </li>
+                <li *ngFor="let skill of dropdownSkills">
+                  <a class="dropdown-item" href="#" (click)="addSkill(skill.id); $event.preventDefault()">{{ skill.skill
+                    ?? '' }}</a>
+                </li>
+                <li *ngIf="dropdownSkills.length === 0">
+                  <span class="dropdown-item-text text-muted">No skills found</span>
+                </li>
+              </div>
             </ul>
           </div>
         </div>

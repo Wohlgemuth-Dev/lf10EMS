@@ -147,23 +147,21 @@ export class EmployeeInspectorComponent implements OnInit {
   }
 
   addSkill(skillId: number | undefined, skillToAdd?: Skill) {
-    if (skillId) {
+    if (skillId && this.employee.id) {
       if (!skillToAdd) {
         skillToAdd = this.availableSkills.find(s => s.id == skillId);
       }
 
-      if (skillToAdd) {
-        if (!this.employee.skillSet) {
-          this.employee.skillSet = [];
-        }
-        // Check if already exists
-        if (!this.employee.skillSet.some(s => s.id === skillToAdd?.id)) {
-          this.employee.skillSet.push(skillToAdd);
-          this.db.updateEmployee(this.employee).subscribe(() => {
+      if (skillToAdd && skillToAdd.skill) {
+        this.db.addQualificationToEmployee(this.employee.id, skillToAdd.skill).subscribe(() => {
+          // Refresh employee's qualifications
+          this.db.getEmployeeQualifications(this.employee.id!).subscribe(skills => {
+            this.employee.skillSet = skills;
             this.updateFilteredSkills();
-            this.db.fetchEmployees(); // to update the count in skill manager
+            this.filterSkillsForDropdown();
           });
-        }
+          this.db.fetchEmployees(); // to update the count in skill manager
+        });
       }
       this.newSkillId = null;
       this.skillSearchText = '';
@@ -182,17 +180,6 @@ export class EmployeeInspectorComponent implements OnInit {
 
       if (this.employee.id) {
         createAndAssignSkill(this.employee.id);
-      } else {
-        // First, create the employee to get an ID
-        this.db.createEmployee(this.employee).subscribe(newEmployee => {
-          this.employee = newEmployee;
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { id: newEmployee.id },
-            queryParamsHandling: 'merge',
-          });
-          createAndAssignSkill(newEmployee.id!);
-        });
       }
     }
   }

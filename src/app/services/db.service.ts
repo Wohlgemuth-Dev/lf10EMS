@@ -23,13 +23,12 @@ export class DbService {
 
   private skillsSubject = new BehaviorSubject<Skill[]>([]);
   public skills$ = this.skillsSubject.asObservable();
-  private token: string | string[];
+  private token!: string | string[];
 
   constructor(
     private http: HttpClient,
     protected authService: AuthService,
   ) {
-    this.token = this.authService.getAccessToken();
   }
 
   getEmployees(): Observable<Employee[]> {
@@ -37,13 +36,14 @@ export class DbService {
   }
 
   fetchEmployees() {
+    this.token = this.authService.getAccessToken();
     this.http.get<Employee[]>('http://localhost:8089/employees', {
       headers: new HttpHeaders()
         .set('Authorization', `Bearer ${this.token}`)
     }).subscribe(list => {
       list.forEach(emp => {
         if (emp.skillSet) {
-          emp.skillSet.sort((a, b) => (a.skill || '').localeCompare(b.skill || ''));
+          this.sortSkillSet(emp.skillSet);
         }
       });
       this.employeesSubject.next(list);
@@ -59,7 +59,7 @@ export class DbService {
     }).pipe(
       tap(employee => {
         if (employee && employee.skillSet) {
-          employee.skillSet.sort((a, b) => (a.skill || '').localeCompare(b.skill || ''));
+          this.sortSkillSet(employee.skillSet);
         }
       })
     );
@@ -179,15 +179,25 @@ export class DbService {
 
   getEmployeeQualifications(employeeId: number): Observable<Skill[]> {
     this.token = this.authService.getAccessToken();
-    return this.http.get<Skill[]>(`http://localhost:8089/employees/${employeeId}/qualifications`, {
+    return this.http.get<Employee>(`http://localhost:8089/employees/${employeeId}/qualifications`, {
       headers: new HttpHeaders()
         .set('Authorization', `Bearer ${this.token}`)
-    });
+    }).pipe(
+      map(employee => {
+        const skillSet = employee.skillSet || [];
+        this.sortSkillSet(skillSet);
+        return skillSet;
+      })
+    );
   }
 
-  addQualificationToEmployee(employeeId: number, skillId: number): Observable<any> {
+  private sortSkillSet(skillSet: Skill[]): void {
+    skillSet.sort((a, b) => (a.skill || '').localeCompare(b.skill || ''));
+  }
+
+  addQualificationToEmployee(employeeId: number, skillName: string): Observable<any> {
     this.token = this.authService.getAccessToken();
-    return this.http.post(`http://localhost:8089/employees/${employeeId}/qualifications`,  skillId , {
+    return this.http.post(`http://localhost:8089/employees/${employeeId}/qualifications`, { "skill": skillName }, {
       headers: new HttpHeaders()
         .set('Content-Type', 'application/json')
         .set('Authorization', `Bearer ${this.token}`)

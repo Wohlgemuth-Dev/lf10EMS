@@ -38,10 +38,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  max-height: calc(100vh - 220px);
-  /* Adjust based on header/padding to fill screen.
-     Navbar (~60px) + Margin (~30px) + Footer (~60px) + Padding (~30px) -> ~180-220px offset needed.
-  */
+  height: 100%;
 }
 
 /* Ideally, the card should take available height of parent.
@@ -88,3 +85,6 @@ thead {
   z-index: 1;
 }
 
+td {
+  vertical-align: middle;
+}

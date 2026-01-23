@@ -1,22 +1,27 @@
-.skill-list-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-}
-
 .filter-card {
-  min-width: 230px;
-}
-
-.search-bar-container {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  padding: 0;
-  z-index: 10;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-body {
-  max-height: calc(100vh - 220px);
+  flex-grow: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.search-bar-container {
+  padding: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.skill-list-container {
+  flex-grow: 1;
   overflow-y: auto;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
 }

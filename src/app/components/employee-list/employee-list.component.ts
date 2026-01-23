@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Employee } from "../../model/Employee";
 import { Router } from "@angular/router";
@@ -23,7 +23,6 @@ export class EmployeeListComponent {
     private router: Router,
     protected db: DbService
   ) {
-    db.fetchEmployees();
     this.sortedEmployees$ = this.getSortedEmployees();
   }
 

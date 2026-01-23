@@ -1,27 +1,27 @@
 .overview-container {
   display: flex;
-  flex-direction: column;
   gap: 1rem;
+  height: calc(100vh - 160px - 1rem); /* Adjust if necessary for header/footer/margins and gap */
+}
+
+.filter-container {
+  width: 250px;
+  flex-shrink: 0;
 }
 
 .employee-list-container {
-  width: 100%;
-  min-width: 0; /* Prevents flex items from overflowing */
+  flex-grow: 1;
+  min-width: 0; /* Prevent overflow */
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .overview-container {
-    flex-direction: row;
-    align-items: flex-start;
+    flex-direction: column;
+    height: auto; /* Allow height to be determined by content on small screens */
   }
 
   .filter-container {
-    width: 250px;
-    flex-shrink: 0; /* Prevents the filter from shrinking */
-  }
-
-  .employee-list-container {
-    flex-grow: 1;
+    width: 100%;
   }
 }
 

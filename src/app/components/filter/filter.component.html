@@ -13,11 +13,11 @@
       type="text"
       class="form-control form-control-sm"
       placeholder="Search skills..."
-      [ngModel]="skillSearchText.getValue()"
-      (ngModelChange)="onSearchChange($event)"
+      [ngModel]="searchTerm$ | async"
+      (ngModelChange)="onSearchTermChanged($event)"
     >
   </div>
-  <div class="skill-list-container p-3">
+  <div class="skill-list-container">
     @for(skill of filteredSkills$ | async; track skill.id) {
       <div class="form-check mb-2">
         <input
